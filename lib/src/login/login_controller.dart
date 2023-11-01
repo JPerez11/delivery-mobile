@@ -7,15 +7,16 @@ class LoginController {
 
   Future? init(BuildContext context) {
     this.context = context;
+    return null;
   }
 
   void goToRegisterPage() {
     Navigator.pushNamed(context!, 'register');
   }
 
-  void login(){
+  void login() {
     String email = emailController.text.trim();
-    String password= passwordController.text.trim();
+    String password = passwordController.text.trim();
     print('Email $email');
     print('Password $password');
   }

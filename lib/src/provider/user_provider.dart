@@ -11,18 +11,17 @@ class UserProvider {
   final String _api = "/api/users";
 
   BuildContext? context;
-  
+
   Future? init(BuildContext context) {
     this.context = context;
+    return null;
   }
 
   Future<ResponseApi> create(User user) async {
     try {
       Uri url = Uri.http(_url, '$_api/create');
       String bodyParams = json.encode(user);
-      Map<String, String> header = {
-        'content-type': 'application/json'
-      };
+      Map<String, String> header = {'content-type': 'application/json'};
       final res = await http.post(url, headers: header, body: bodyParams);
       final data = json.decode(res.body);
 

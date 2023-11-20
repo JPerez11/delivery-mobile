@@ -2,6 +2,7 @@ import 'package:delivery/src/models/response_api.dart';
 import 'package:delivery/src/models/user.dart';
 import 'package:delivery/src/provider/user_provider.dart';
 import 'package:delivery/src/utils/my_snackbar.dart';
+import 'package:delivery/src/utils/shared_pref.dart';
 import 'package:flutter/material.dart';
 
 class RegisterController {
@@ -14,6 +15,7 @@ class RegisterController {
   TextEditingController confirmPasswordController = TextEditingController();
 
   UserProvider userProvider = UserProvider();
+  SharedPref _sharedPref = new SharedPref();
 
   Future? init(BuildContext context) {
     this.context = context;
@@ -38,15 +40,40 @@ class RegisterController {
       return;
     }
 
+    if (!emailValidate(email)) {
+      MySnackbar.show(context!, 'El email no es valido');
+      return;
+    }
+
+    ResponseApi userByEmail = await userProvider.getByEmail(email);
+
+    if (userByEmail.data != null) {
+      MySnackbar.show(
+          context!, 'Ya existe un usuario registrado con ese correo');
+      return;
+    }
+
+    if (phone.contains(RegExp('[A-Za-z]'))) {
+      MySnackbar.show(context!, 'El campo telefono debe ser numérico');
+      return;
+    }
+
+    ResponseApi userByPhone = await userProvider.getByPhone(phone);
+
+    if (userByPhone.data != null) {
+      MySnackbar.show(
+          context!, 'Ya existe un usuario registrado con ese telefono');
+      return;
+    }
+
     if (password.length < 8) {
-      MySnackbar.show(context!, 'La contraseña tiene menos de 6 digitos');
+      MySnackbar.show(context!, 'La contraseña tiene menos de 8 digitos');
       return;
     }
 
     if (confirmPassword != password) {
-      throw Exception(
-        const Text("Las contraseñas no coinciden"),
-      );
+      MySnackbar.show(context!, "Las contraseñas no coinciden");
+      return;
     }
 
     User user = User(
@@ -56,13 +83,31 @@ class RegisterController {
         lastname: lastname,
         phone: phone);
 
-    ResponseApi responseApi = await userProvider.create(user);
+    ResponseApi userRegister = await userProvider.create(user);
+    print('Respuesta al register: ${userRegister.toJson()}');
 
-    MySnackbar.show(context!, responseApi.message!);
-    print('Respuesta ${responseApi.toJson()}');
+    ResponseApi responseLogin = await userProvider.login(email, password);
+    print('Respuesta al login: ${responseLogin.toJson()}');
+    if (userRegister.success!) {
+      User user = User.fromJson(responseLogin.data);
+      _sharedPref.save('user', user.toJson());
+      Navigator.pushNamedAndRemoveUntil(
+          context!, 'client/products/list', (route) => false);
+    } else {
+      MySnackbar.show(context!, userRegister.message!);
+    }
   }
 
   void goToLoginPage() {
     Navigator.pushNamed(context!, 'login');
+  }
+
+  bool emailValidate(String email) {
+    final RegExp regex = RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+      caseSensitive: false,
+      multiLine: false,
+    );
+    return regex.hasMatch(email);
   }
 }

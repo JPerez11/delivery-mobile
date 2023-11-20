@@ -11,18 +11,20 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  LoginController _con = new LoginController();
+  final LoginController _con = LoginController();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _con.init(context);
+    });
     super.initState();
-    _con.init(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         child: Stack(
           children: [

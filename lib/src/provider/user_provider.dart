@@ -19,7 +19,7 @@ class UserProvider {
 
   Future<ResponseApi> create(User user) async {
     try {
-      Uri url = Uri.http(_url, '$_api/create');
+      Uri url = Uri.http(_url, '$_api/register');
       String bodyParams = json.encode(user);
       Map<String, String> header = {'content-type': 'application/json'};
       final res = await http.post(url, headers: header, body: bodyParams);
@@ -30,7 +30,56 @@ class UserProvider {
       return responseApi;
     } catch (e) {
       print('Error : $e');
-      return ResponseApi.fromJson({'error': 'error del servidor'});
+      return ResponseApi.fromJson({'message': 'error del servidor'});
+    }
+  }
+
+  Future<ResponseApi> login(String email, String password) async {
+    try {
+      Uri url = Uri.http(_url, '$_api/login');
+      String bodyParams = json.encode({'email': email, 'password': password});
+      Map<String, String> header = {'content-type': 'application/json'};
+      final res = await http.post(url, headers: header, body: bodyParams);
+      final data = json.decode(res.body);
+
+      print(data);
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    } catch (e) {
+      print('Error : $e');
+      return ResponseApi.fromJson({'message': 'error del servidor'});
+    }
+  }
+
+  Future<ResponseApi> getByEmail(String email) async {
+    try {
+      Uri url = Uri.http(_url, '$_api/find-by-email/$email');
+      Map<String, String> header = {'content-type': 'application/json'};
+      final res = await http.get(url, headers: header);
+      final data = json.decode(res.body);
+
+      print(data);
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    } catch (e) {
+      print('Error : $e');
+      return ResponseApi.fromJson({'message': 'error del servidor'});
+    }
+  }
+
+  Future<ResponseApi> getByPhone(String phone) async {
+    try {
+      Uri url = Uri.http(_url, '$_api/find-by-phone/$phone');
+      Map<String, String> header = {'content-type': 'application/json'};
+      final res = await http.get(url, headers: header);
+      final data = json.decode(res.body);
+
+      print(data);
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    } catch (e) {
+      print('Error : $e');
+      return ResponseApi.fromJson({'message': 'error del servidor'});
     }
   }
 }

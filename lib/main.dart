@@ -1,3 +1,4 @@
+import 'package:delivery/src/client/products/list/client_products_list_page.dart';
 import 'package:delivery/src/login/login_page.dart';
 import 'package:delivery/src/register/register_page.dart';
 import 'package:delivery/src/utils/my_colors.dart';
@@ -23,7 +24,9 @@ class _MyAppState extends State<MyApp> {
       initialRoute: 'login',
       routes: {
         'login': ((BuildContext context) => const LoginPage()),
-        'register': ((BuildContext context) => const RegisterPage())
+        'register': ((BuildContext context) => const RegisterPage()),
+        'client/products/list': ((BuildContext context) =>
+            const ClientProductsListPage())
       },
       theme: ThemeData(primaryColor: MyColors.primaryColor),
     );

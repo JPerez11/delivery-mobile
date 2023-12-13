@@ -17,17 +17,13 @@ class LoginController {
     this.context = context;
     await userProvider.init(context);
 
-    dynamic object = await _sharedPref.read('token');
-    print('Login controller: $object');
+    dynamic token = await _sharedPref.read('token');
+    print('Login controller: $token');
 
-    if (object != false) {
-      User user = User.fromJson(object);
+    if (token != false) {
       print("Recopilando caché:");
-      print(user.toJson());
-      if (user.sessionToken != null) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, 'client/products/list', (route) => false);
-      }
+      Navigator.pushNamedAndRemoveUntil(
+          context, 'client/products/list', (route) => false);
     }
   }
 
@@ -51,8 +47,11 @@ class LoginController {
     ResponseApi responseApi = await userProvider.login(email, password);
 
     if (responseApi.success!) {
-      User user = User.fromJson(responseApi.data);
-      _sharedPref.save('token', user.sessionToken);
+      String token = responseApi.data['session_token'];
+      _sharedPref.save('token', token);
+
+      userProvider.updateToken(email, token);
+
       Navigator.pushNamedAndRemoveUntil(
           context!, 'client/products/list', (route) => false);
     } else {

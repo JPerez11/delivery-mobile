@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPref {
-  void save(String key, value) async {
+  void save(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(key, json.encode(value));
+    prefs.setString(key, value);
   }
 
   Future<dynamic> read(String key) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getString(key) == null) return false;
 
-    return json.decode(prefs.getString(key)!);
+    return prefs.getString(key)!;
   }
 
   Future<bool> contains(String key) async {
@@ -27,7 +27,7 @@ class SharedPref {
   }
 
   void logout(BuildContext context) async {
-    await remove('user');
+    await remove('token');
 
     Navigator.pushNamedAndRemoveUntil(context, 'login', (route) => false);
   }

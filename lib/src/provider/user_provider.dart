@@ -42,7 +42,6 @@ class UserProvider {
       final res = await http.post(url, headers: header, body: bodyParams);
       final data = json.decode(res.body);
 
-      print(data);
       ResponseApi responseApi = ResponseApi.fromJson(data);
       return responseApi;
     } catch (e) {
@@ -58,7 +57,6 @@ class UserProvider {
       final res = await http.get(url, headers: header);
       final data = json.decode(res.body);
 
-      print(data);
       ResponseApi responseApi = ResponseApi.fromJson(data);
       return responseApi;
     } catch (e) {
@@ -74,7 +72,22 @@ class UserProvider {
       final res = await http.get(url, headers: header);
       final data = json.decode(res.body);
 
-      print(data);
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    } catch (e) {
+      print('Error : $e');
+      return ResponseApi.fromJson({'message': 'error del servidor'});
+    }
+  }
+
+  Future<ResponseApi> updateToken(String email, String token) async {
+    try {
+      Uri url = Uri.http(_url, '$_api/update-token');
+      String bodyParams = json.encode({'email': email, 'token': token});
+      Map<String, String> header = {'content-type': 'application/json'};
+      final res = await http.put(url, headers: header, body: bodyParams);
+      final data = json.decode(res.body);
+
       ResponseApi responseApi = ResponseApi.fromJson(data);
       return responseApi;
     } catch (e) {

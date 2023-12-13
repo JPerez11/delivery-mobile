@@ -89,8 +89,7 @@ class RegisterController {
     ResponseApi responseLogin = await userProvider.login(email, password);
     print('Respuesta al login: ${responseLogin.toJson()}');
     if (userRegister.success!) {
-      User user = User.fromJson(responseLogin.data);
-      _sharedPref.save('user', user.toJson());
+      _sharedPref.save('token', responseLogin.data['session_token']);
       Navigator.pushNamedAndRemoveUntil(
           context!, 'client/products/list', (route) => false);
     } else {
